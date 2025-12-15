@@ -1,7 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
-
 from .models import Organization, Project, Task, TaskComment
+from graphql import GraphQLError
 
 
 
@@ -59,7 +59,7 @@ def require_org(info):
     request = info.context
     org = getattr(request, "org", None)
     if org is None:
-        raise Exception("Organization context missing")
+        raise GraphQLError("Missing x-org-slug (organization not selected).")
     return org
 
 
@@ -67,10 +67,15 @@ def require_org(info):
 # Queries
 
 class Query(graphene.ObjectType):
+    organizations = graphene.List(OrganizationType)
     projects = graphene.List(ProjectType)
     tasks = graphene.List(TaskType, project_id=graphene.ID(required=True))
     task_comments = graphene.List(TaskCommentType, task_id=graphene.ID(required=True))
     project_stats = graphene.Field(ProjectStatsType, project_id=graphene.ID(required=True))
+
+    def resolve_organizations(root, info):
+        # global discovery endpoint (for screening/demo)
+        return Organization.objects.all().order_by("name")
 
     def resolve_projects(root, info):
         org = require_org(info)
@@ -95,10 +100,7 @@ class Query(graphene.ObjectType):
     def resolve_project_stats(root, info, project_id):
         org = require_org(info)
 
-        # Ensure project belongs to org
-        Project.objects.get(id=project_id, organization=org)
-
-        qs = Task.objects.filter(project_id=project_id)
+        qs = Task.objects.filter(project_id=project_id, project__organization=org)
         total = qs.count()
         done = qs.filter(status="DONE").count()
         rate = (done / total) if total else 0.0
@@ -108,7 +110,6 @@ class Query(graphene.ObjectType):
             done_tasks=done,
             completion_rate=rate,
         )
-
 
 
 # Mutations
