@@ -1,0 +1,123 @@
+.card{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  box-shadow: var(--shadow2);
+  overflow:hidden;
+}
+.cardHd{
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.cardBd{padding:16px}
+
+.btn{
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.06);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius: 12px;
+  cursor:pointer;
+  transition: transform .08s ease, background .15s ease, border-color .15s ease;
+}
+.btn:hover{background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.18)}
+.btn:active{transform: translateY(1px)}
+.btnPrimary{
+  border-color: rgba(109,124,255,.45);
+  background: linear-gradient(135deg, rgba(109,124,255,.92), rgba(139,92,246,.85));
+}
+.btnPrimary:hover{filter: brightness(1.06)}
+.btnGhost{background: transparent}
+
+.input{
+  width:100%;
+  border:1px solid var(--border);
+  background: rgba(0,0,0,.16);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius: 12px;
+}
+.input::placeholder{color: rgba(255,255,255,.45)}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background: rgba(255,255,255,.06);
+  font-size:12px;
+  color: var(--muted);
+}
+.dot{width:8px;height:8px;border-radius:99px;background:rgba(255,255,255,.40)}
+.badgeDone .dot{background: var(--ok)}
+.badgeTodo .dot{background: var(--warn)}
+
+.table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+}
+.table th, .table td{
+  padding:12px 12px;
+  border-bottom:1px solid var(--border);
+  text-align:left;
+  font-size:13px;
+}
+.table th{color:var(--muted); font-weight:600}
+.rowHover:hover{background: rgba(255,255,255,.05)}
+
+/* clickable card links */
+.cardLink{
+  transition: transform .08s ease, background .15s ease, border-color .15s ease;
+}
+.cardLink:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.07);
+}
+
+/* type helpers */
+.titleMd{font-size:14px; font-weight:650;}
+.titleSm{font-size:13px; font-weight:650;}
+.empty{color: var(--muted); font-size:13px; padding: 10px 2px;}
+
+/* stats */
+.statsGrid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.statTile{
+  border:1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255,255,255,.04);
+}
+.statNum{font-size:22px; font-weight:750; letter-spacing:.2px;}
+.statLbl{font-size:12px; color: var(--muted); margin-top:6px;}
+
+/* kanban visuals */
+.kanbanCol{
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 10px;
+  min-height: 240px;
+}
+.kanbanHd{
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.taskCard{
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px;
+}

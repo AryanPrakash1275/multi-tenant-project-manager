@@ -6,6 +6,10 @@ import { ApolloProvider } from "@apollo/client/react";
 import App from "./App";
 import { createClient } from "./apollo";
 import "./index.css";
+import "./styles/tokens.css";
+import "./styles/base.css";
+import "./styles/layout.css";
+import "./styles/ui.css";
 
 //const orgSlug = "acme";
 //const client = createClient(orgSlug);

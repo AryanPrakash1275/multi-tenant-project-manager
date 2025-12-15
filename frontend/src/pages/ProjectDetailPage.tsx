@@ -187,10 +187,7 @@ export default function ProjectDetailPage() {
     fetchPolicy: "cache-and-network",
   });
 
-  const {
-    data: statsData,
-    error: statsError,
-  } = useQuery<StatsData, StatsVars>(GET_PROJECT_STATS, {
+  const { data: statsData, error: statsError } = useQuery<StatsData, StatsVars>(GET_PROJECT_STATS, {
     variables: { projectId: projectId ?? "" },
     skip: !projectId,
     fetchPolicy: "cache-and-network",
@@ -285,9 +282,20 @@ export default function ProjectDetailPage() {
 
   if (!projectId) {
     return (
-      <div style={{ padding: 16 }}>
-        <p>Missing projectId</p>
-        <Link to="/projects">Back</Link>
+      <div className="container">
+        <div className="card">
+          <div className="cardBd">
+            <div className="titleMd">Missing projectId</div>
+            <div className="sub" style={{ marginTop: 6 }}>
+              Open a project from the list.
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <Link className="btn btnGhost" to="/projects">
+                ← Back to projects
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -302,48 +310,132 @@ export default function ProjectDetailPage() {
   const columns: CanonStatus[] = ["TODO", "IN_PROGRESS", "DONE", "OTHER"];
 
   return (
-    <div style={{ padding: 16, maxWidth: 900, margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2 style={{ margin: 0 }}>Project {projectId}</h2>
-        <Link to="/projects">← Back</Link>
+    <div className="container">
+      <div className="topbar">
+        <div>
+          <h1 className="h1">Project {projectId}</h1>
+          <div className="sub">
+            {stats?.totalTasks ?? tasks.length} tasks · {completion}% complete
+          </div>
+        </div>
+
+        <div className="row" style={{ gap: 10 }}>
+          <Link className="btn btnGhost" to="/projects">
+            ← Back
+          </Link>
+        </div>
       </div>
 
       {(tasksError || statsError) && (
-        <div style={{ marginTop: 12 }}>
-          <div>{tasksError ? `Tasks: ${tasksError.message}` : null}</div>
-          <div>{statsError ? `Stats: ${statsError.message}` : null}</div>
+        <div className="card" style={{ marginBottom: 16 }}>
+          <div className="cardBd">
+            <div className="titleSm">Errors</div>
+            <div className="sub" style={{ marginTop: 6 }}>
+              {tasksError ? `Tasks: ${tasksError.message}` : null}
+              {tasksError && statsError ? " · " : null}
+              {statsError ? `Stats: ${statsError.message}` : null}
+            </div>
+          </div>
         </div>
       )}
 
-      <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
-        <StatCard label="Total tasks" value={stats?.totalTasks ?? tasks.length} loading={!stats && tasksLoading} />
-        <StatCard label="Done tasks" value={stats?.doneTasks ?? grouped.DONE.length} loading={!stats && tasksLoading} />
-        <StatCard label="Completion %" value={completion} loading={!stats && tasksLoading} />
-        <StatCard label="Other" value={grouped.OTHER.length} loading={tasksLoading && tasks.length === 0} />
-      </div>
+      <div className="detailGrid">
+        {/* LEFT: Tasks */}
+        <div className="stack">
+          <div className="card">
+            <div className="cardHd">
+              <div className="rowBetween">
+                <div className="titleMd">Tasks</div>
+                <span className="badge">
+                  <span className="dot" />
+                  {tasksLoading ? "Syncing…" : "Up to date"}
+                </span>
+              </div>
+            </div>
 
-      <form onSubmit={onCreateTask} style={{ marginTop: 16, display: "flex", gap: 8 }}>
-        <input
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          placeholder="New task title"
-          style={{ flex: 1, padding: "10px 12px" }}
-        />
-        <button type="submit" disabled={creating || !newTitle.trim()} style={{ padding: "10px 12px" }}>
-          {creating ? "Adding..." : "Add"}
-        </button>
-      </form>
-
-      <div style={{ marginTop: 16 }}>
-        {tasksLoading && tasks.length === 0 ? (
-          <div>Loading tasks...</div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
-            {columns.map((c) => (
-              <TaskColumn key={c} title={c} tasks={grouped[c]} onToggleStatus={onToggleStatus} />
-            ))}
+            <div className="cardBd">
+              <form onSubmit={onCreateTask} className="row" style={{ gap: 10 }}>
+                <input
+                  className="input"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  placeholder="New task title"
+                />
+                <button className="btn btnPrimary" type="submit" disabled={creating || !newTitle.trim()}>
+                  {creating ? "Adding…" : "Add task"}
+                </button>
+              </form>
+            </div>
           </div>
-        )}
+
+          <div className="kanban">
+            {tasksLoading && tasks.length === 0 ? (
+              <div className="card">
+                <div className="cardBd">Loading tasks…</div>
+              </div>
+            ) : (
+              columns.map((c) => (
+                <TaskColumn key={c} title={c} tasks={grouped[c]} onToggleStatus={onToggleStatus} />
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT: Stats */}
+        <div className="stack">
+          <div className="card">
+            <div className="cardHd">
+              <div className="titleMd">Stats</div>
+            </div>
+            <div className="cardBd">
+              <div className="statsGrid">
+                <StatTile label="Total" value={stats?.totalTasks ?? tasks.length} />
+                <StatTile label="Done" value={stats?.doneTasks ?? grouped.DONE.length} />
+                <StatTile label="Completion" value={completion} suffix="%" />
+              </div>
+
+              <div style={{ marginTop: 12 }} className="rowBetween">
+                <span className="badge badgeTodo">
+                  <span className="dot" />
+                  TODO
+                </span>
+                <div className="sub">{grouped.TODO.length}</div>
+              </div>
+              <div style={{ marginTop: 8 }} className="rowBetween">
+                <span className="badge">
+                  <span className="dot" />
+                  IN_PROGRESS
+                </span>
+                <div className="sub">{grouped.IN_PROGRESS.length}</div>
+              </div>
+              <div style={{ marginTop: 8 }} className="rowBetween">
+                <span className="badge badgeDone">
+                  <span className="dot" />
+                  DONE
+                </span>
+                <div className="sub">{grouped.DONE.length}</div>
+              </div>
+              <div style={{ marginTop: 8 }} className="rowBetween">
+                <span className="badge">
+                  <span className="dot" />
+                  OTHER
+                </span>
+                <div className="sub">{grouped.OTHER.length}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="cardHd">
+              <div className="titleMd">Notes</div>
+            </div>
+            <div className="cardBd">
+              <div className="sub">
+                Optional: add comments UI later. Not required for submission.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -353,12 +445,15 @@ export default function ProjectDetailPage() {
    UI
 ========================= */
 
-function StatCard(props: { label: string; value?: number; loading: boolean }) {
-  const { label, value, loading } = props;
+function StatTile(props: { label: string; value: number; suffix?: string }) {
+  const { label, value, suffix } = props;
   return (
-    <div style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
-      <div style={{ fontSize: 12, color: "#666" }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 700 }}>{loading && value == null ? "…" : value ?? 0}</div>
+    <div className="statTile">
+      <div className="statNum">
+        {value}
+        {suffix ?? ""}
+      </div>
+      <div className="statLbl">{label}</div>
     </div>
   );
 }
@@ -367,26 +462,34 @@ function TaskColumn(props: { title: string; tasks: Task[]; onToggleStatus: (t: T
   const { title, tasks, onToggleStatus } = props;
 
   return (
-    <div style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12, minHeight: 180 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <h3 style={{ margin: 0, fontSize: 14 }}>{title}</h3>
-        <span style={{ fontSize: 12, color: "#666" }}>{tasks.length}</span>
+    <div className="kanbanCol">
+      <div className="kanbanHd">
+        <div className="rowBetween">
+          <span>{title}</span>
+          <span className="muted">{tasks.length}</span>
+        </div>
       </div>
 
-      <div style={{ marginTop: 10, display: "grid", gap: 8 }}>
+      <div className="colStack">
         {tasks.map((t) => (
-          <div key={t.id} style={{ border: "1px solid #eee", borderRadius: 8, padding: 10 }}>
-            <div style={{ fontWeight: 600 }}>{t.title}</div>
-            <div style={{ marginTop: 6, fontSize: 12, color: "#777" }}>status: {t.status}</div>
-            <div style={{ marginTop: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <button type="button" onClick={() => onToggleStatus(t)} style={{ padding: "6px 10px" }}>
+          <div key={t.id} className="taskCard">
+            <div className="rowBetween">
+              <div className="titleSm">{t.title}</div>
+              <span className={`badge ${normalizeStatus(t.status) === "DONE" ? "badgeDone" : "badgeTodo"}`}>
+                <span className="dot" />
+                {normalizeStatus(t.status)}
+              </span>
+            </div>
+
+            <div className="row" style={{ marginTop: 10, justifyContent: "flex-end" }}>
+              <button type="button" className="btn" onClick={() => onToggleStatus(t)}>
                 Toggle
               </button>
             </div>
           </div>
         ))}
 
-        {tasks.length === 0 && <div style={{ color: "#777", fontSize: 13 }}>No tasks</div>}
+        {tasks.length === 0 && <div className="empty">No tasks</div>}
       </div>
     </div>
   );
