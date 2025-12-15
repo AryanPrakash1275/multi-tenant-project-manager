@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client/react";
 import { Link } from "react-router-dom";
 import { GET_PROJECTS } from "../graphql/projects";
+import { getOrgSlug } from "../tenant";
 
 type Project = {
   id: string;
@@ -9,7 +10,36 @@ type Project = {
 };
 
 export default function ProjectsPage() {
-  const { data, loading, error } = useQuery<{ projects: Project[] }>(GET_PROJECTS);
+  const slug = getOrgSlug();
+
+  // Hook is ALWAYS called
+  const { data, loading, error } = useQuery<{ projects: Project[] }>(
+    GET_PROJECTS,
+    {
+      skip: !slug,
+    }
+  );
+
+  // Guard UI
+  if (!slug) {
+    return (
+      <div className="container">
+        <div className="card">
+          <div className="cardBd">
+            <div className="titleMd">No organization selected</div>
+            <div className="sub" style={{ marginTop: 6 }}>
+              Pick an organization to set x-org-slug.
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <Link className="btn btnPrimary" to="/orgs">
+                Choose organization
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div className="container">Loading projects…</div>;
   if (error) return <div className="container">Error: {error.message}</div>;
@@ -22,6 +52,17 @@ export default function ProjectsPage() {
         <div>
           <h1 className="h1">Projects</h1>
           <div className="sub">Select a project to view tasks and stats.</div>
+        </div>
+
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <span className="badge">
+            <span className="dot" />
+            Org: {slug}
+          </span>
+
+          <Link className="btn btnGhost" to="/orgs">
+            Switch org
+          </Link>
         </div>
       </div>
 
