@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_PROJECT_DETAIL = gql`
-  query GetProjectDetail($projectId: ID!) {
+  query GetProjectDetail($projectId: Int!) {
     tasks(projectId: $projectId) {
       id
       title
