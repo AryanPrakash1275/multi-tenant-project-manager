@@ -302,10 +302,11 @@ export default function ProjectDetailPage() {
 
   const completion =
     stats?.completionRate != null
-      ? Math.round(stats.completionRate)
+      ? Math.round(stats.completionRate * 100)
       : tasks.length > 0
       ? Math.round((grouped.DONE.length / tasks.length) * 100)
       : 0;
+
 
   const columns: CanonStatus[] = ["TODO", "IN_PROGRESS", "DONE", "OTHER"];
 
