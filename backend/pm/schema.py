@@ -4,7 +4,6 @@ from .models import Organization, Project, Task, TaskComment
 from graphql import GraphQLError
 
 
-
 # GraphQL Types
 
 class OrganizationType(DjangoObjectType):
@@ -74,7 +73,7 @@ class Query(graphene.ObjectType):
     project_stats = graphene.Field(ProjectStatsType, project_id=graphene.ID(required=True))
 
     def resolve_organizations(root, info):
-        # global discovery endpoint (for screening/demo)
+        # global discovery endpoint 
         return Organization.objects.all().order_by("name")
 
     def resolve_projects(root, info):
@@ -84,7 +83,7 @@ class Query(graphene.ObjectType):
     def resolve_tasks(root, info, project_id):
         org = require_org(info)
 
-        # Ensure project belongs to org
+        # Ensures project belongs to org
         Project.objects.get(id=project_id, organization=org)
 
         return Task.objects.filter(project_id=project_id).order_by("-created_at")
@@ -92,7 +91,7 @@ class Query(graphene.ObjectType):
     def resolve_task_comments(root, info, task_id):
         org = require_org(info)
 
-        # Ensure task belongs to org
+        # Ensures task belongs to org
         Task.objects.get(id=task_id, project__organization=org)
 
         return TaskComment.objects.filter(task_id=task_id).order_by("created_at")

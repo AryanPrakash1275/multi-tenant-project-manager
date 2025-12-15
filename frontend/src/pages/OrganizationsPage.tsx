@@ -32,7 +32,7 @@ export default function OrganizationsPage() {
             style={{ textAlign: "left", cursor: "pointer" }}
             onClick={async () => {
               setOrgSlug(o.slug);
-              await client.resetStore(); // prevent cross-tenant cached UI
+              await client.resetStore(); // prevents cross-tenant cached UI
               nav("/projects");
             }}
           >

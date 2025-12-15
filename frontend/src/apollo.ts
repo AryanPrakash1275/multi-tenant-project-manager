@@ -1,4 +1,3 @@
-// frontend/src/apollo.ts
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from "@apollo/client";
 import { getOrgSlug } from "./tenant";
 
@@ -14,7 +13,7 @@ export const client = (() => {
     operation.setContext({
       headers: {
         ...prev,
-        ...(slug ? { "x-org-slug": slug } : {}), // no header if not selected
+        ...(slug ? { "x-org-slug": slug } : {}), //header drops if not selected
       },
     });
 

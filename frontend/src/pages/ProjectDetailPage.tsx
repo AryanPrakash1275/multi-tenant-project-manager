@@ -1,13 +1,11 @@
-// src/pages/ProjectDetailPage.tsx
 import React, { useMemo, useState } from "react";
 import { gql, ApolloCache } from "@apollo/client";
 import type { FetchResult } from "@apollo/client";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { Link, useParams } from "react-router-dom";
 
-/* =========================
-   GraphQL
-========================= */
+
+//GraphQL
 
 const GET_TASKS = gql`
   query Tasks($projectId: ID!) {
@@ -62,9 +60,8 @@ const UPDATE_TASK = gql`
   }
 `;
 
-/* =========================
-   Types
-========================= */
+
+//Types
 
 type Task = {
   __typename?: string;
@@ -116,9 +113,8 @@ type UpdateTaskVars = {
   status: string;
 };
 
-/* =========================
-   Helpers
-========================= */
+
+//Helpers
 
 type CanonStatus = "TODO" | "IN_PROGRESS" | "DONE" | "OTHER";
 
@@ -169,9 +165,8 @@ function updateStatsCache(cache: ApolloCache, projectId: string, updater: (stats
   });
 }
 
-/* =========================
-   Component
-========================= */
+
+//Component
 
 export default function ProjectDetailPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -341,7 +336,6 @@ export default function ProjectDetailPage() {
       )}
 
       <div className="detailGrid">
-        {/* LEFT: Tasks */}
         <div className="stack">
           <div className="card">
             <div className="cardHd">
@@ -382,7 +376,6 @@ export default function ProjectDetailPage() {
           </div>
         </div>
 
-        {/* RIGHT: Stats */}
         <div className="stack">
           <div className="card">
             <div className="cardHd">
@@ -442,9 +435,8 @@ export default function ProjectDetailPage() {
   );
 }
 
-/* =========================
-   UI
-========================= */
+
+//UI
 
 function StatTile(props: { label: string; value: number; suffix?: string }) {
   const { label, value, suffix } = props;

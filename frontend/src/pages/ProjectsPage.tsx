@@ -12,7 +12,6 @@ type Project = {
 export default function ProjectsPage() {
   const slug = getOrgSlug();
 
-  // Hook is ALWAYS called
   const { data, loading, error } = useQuery<{ projects: Project[] }>(
     GET_PROJECTS,
     {
